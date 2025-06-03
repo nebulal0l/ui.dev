@@ -1,15 +1,3 @@
---[[
-██    ██ ██    ██████  ███████ ██    ██ 
-██    ██ ██    ██   ██ ██      ██    ██ 
-██    ██ ██    ██   ██ █████   ██    ██ 
-██    ██ ██    ██   ██ ██       ██  ██  
- ██████  ██ ██ ██████  ███████   ████   
-                                        
-[UIDEV] Hello! this is the official source of the UI.DEV Library.
-[UIDEV] Take the Source if you want, Just give credits.
---]]
-
-
 local uidev = {}
 uidev.__index = uidev
 
@@ -236,12 +224,14 @@ function uidev:CreateWindow(options)
 
     function Window:CreateTab(options)
         options = options or {}
+        local CurrentTheme = Window.Theme -- Add this line to access the theme
+        
         local tabData = {
             Name = options.Name or "New Tab",
             Icon = options.Icon or "",
             Visible = true
         }
-
+        
         local TabButton = Instance.new("TextButton")
         TabButton.Name = tabData.Name .. "Tab"
         TabButton.Parent = TabContainer
