@@ -1,3 +1,15 @@
+--[[
+██    ██ ██    ██████  ███████ ██    ██ 
+██    ██ ██    ██   ██ ██      ██    ██ 
+██    ██ ██    ██   ██ █████   ██    ██ 
+██    ██ ██    ██   ██ ██       ██  ██  
+ ██████  ██ ██ ██████  ███████   ████   
+                                        
+[UIDEV] Hello! this is the official source of the UI.DEV Library.
+[UIDEV] Take the Source if you want, Just give credits.
+--]]
+
+
 local uidev = {}
 uidev.__index = uidev
 
