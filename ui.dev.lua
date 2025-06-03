@@ -224,7 +224,7 @@ function uidev:CreateWindow(options)
 
     function Window:CreateTab(options)
         options = options or {}
-        local CurrentTheme = Window.Theme -- Use the Window reference directly
+        local CurrentTheme = self.Theme
         
         local tabData = {
             Name = options.Name or "New Tab",
@@ -329,6 +329,7 @@ function uidev:CreateWindow(options)
             options = options or {}
             local buttonData = {
                 Name = options.Name or "Button",
+                local CurrentTheme = Window.Theme -- Add this line
                 Callback = options.Callback or function() end,
                 Description = options.Description or ""
             }
@@ -374,6 +375,7 @@ function uidev:CreateWindow(options)
             local toggleData = {
                 Name = options.Name or "Toggle",
                 Default = options.Default or false,
+                local CurrentTheme = Window.Theme -- Add this line
                 Callback = options.Callback or function() end
             }
 
@@ -432,6 +434,7 @@ function uidev:CreateWindow(options)
                 Name = options.Name or "Slider",
                 Min = options.Min or 0,
                 Max = options.Max or 100,
+                local CurrentTheme = Window.Theme -- Add this line
                 Default = options.Default or 50,
                 Callback = options.Callback or function() end
             }
@@ -533,6 +536,7 @@ function uidev:CreateWindow(options)
             local inputData = {
                 Name = options.Name or "Input",
                 Placeholder = options.Placeholder or "Enter text...",
+                local CurrentTheme = Window.Theme -- Add this line
                 Callback = options.Callback or function() end
             }
 
@@ -596,6 +600,7 @@ function uidev:CreateWindow(options)
             options = options or {}
             local labelData = {
                 Text = options.Text or "Label",
+                local CurrentTheme = Window.Theme -- Add this line
                 Color = options.Color or CurrentTheme.Text
             }
 
