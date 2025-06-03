@@ -1,10 +1,6 @@
--- Advanced Roblox UI Library
--- Created for easy GUI creation with tabs, buttons, and customization
-
 local UILibrary = {}
 UILibrary.__index = UILibrary
 
--- Services
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -13,7 +9,6 @@ local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
--- Library Configuration
 local Config = {
     Colors = {
         Primary = Color3.fromRGB(45, 45, 55),
@@ -32,7 +27,6 @@ local Config = {
     }
 }
 
--- Main Library Functions
 function UILibrary:CreateWindow(options)
     options = options or {}
     local windowData = {
@@ -44,13 +38,25 @@ function UILibrary:CreateWindow(options)
         CurrentTab = nil
     }
 
-    -- Create main ScreenGui
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "UILibrary_" .. windowData.Title
     ScreenGui.Parent = PlayerGui
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    -- Main Frame
+    local Shadow = Instance.new("Frame")
+    Shadow.Name = "Shadow"
+    Shadow.Parent = ScreenGui
+    Shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Shadow.BackgroundTransparency = 0.7
+    Shadow.BorderSizePixel = 0
+    Shadow.Position = UDim2.new(0.5, -windowData.Size.X.Offset/2 + 5, 0.5, -windowData.Size.Y.Offset/2 + 5)
+    Shadow.Size = windowData.Size
+    Shadow.ZIndex = 0
+
+    local ShadowCorner = Instance.new("UICorner")
+    ShadowCorner.CornerRadius = UDim.new(0, 8)
+    ShadowCorner.Parent = Shadow
+
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.Parent = ScreenGui
@@ -59,28 +65,12 @@ function UILibrary:CreateWindow(options)
     MainFrame.Position = UDim2.new(0.5, -windowData.Size.X.Offset/2, 0.5, -windowData.Size.Y.Offset/2)
     MainFrame.Size = windowData.Size
     MainFrame.ClipsDescendants = true
+    MainFrame.ZIndex = 1
 
-    -- Add corner rounding
     local MainCorner = Instance.new("UICorner")
     MainCorner.CornerRadius = UDim.new(0, 8)
     MainCorner.Parent = MainFrame
 
-    -- Add drop shadow effect
-    local Shadow = Instance.new("Frame")
-    Shadow.Name = "Shadow"
-    Shadow.Parent = ScreenGui
-    Shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    Shadow.BackgroundTransparency = 0.7
-    Shadow.BorderSizePixel = 0
-    Shadow.Position = UDim2.new(0, MainFrame.Position.X.Offset + 5, 0, MainFrame.Position.Y.Offset + 5)
-    Shadow.Size = MainFrame.Size
-    Shadow.ZIndex = MainFrame.ZIndex - 1
-
-    local ShadowCorner = Instance.new("UICorner")
-    ShadowCorner.CornerRadius = UDim.new(0, 8)
-    ShadowCorner.Parent = Shadow
-
-    -- Title Bar
     local TitleBar = Instance.new("Frame")
     TitleBar.Name = "TitleBar"
     TitleBar.Parent = MainFrame
@@ -92,7 +82,6 @@ function UILibrary:CreateWindow(options)
     TitleCorner.CornerRadius = UDim.new(0, 8)
     TitleCorner.Parent = TitleBar
 
-    -- Fix corner rounding for title bar
     local TitleFix = Instance.new("Frame")
     TitleFix.Parent = TitleBar
     TitleFix.BackgroundColor3 = Config.Colors.Secondary
@@ -100,7 +89,6 @@ function UILibrary:CreateWindow(options)
     TitleFix.Position = UDim2.new(0, 0, 0.7, 0)
     TitleFix.Size = UDim2.new(1, 0, 0.3, 0)
 
-    -- Title Label
     local TitleLabel = Instance.new("TextLabel")
     TitleLabel.Name = "TitleLabel"
     TitleLabel.Parent = TitleBar
@@ -113,7 +101,6 @@ function UILibrary:CreateWindow(options)
     TitleLabel.TextSize = 14
     TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-    -- Close Button
     local CloseButton = Instance.new("TextButton")
     CloseButton.Name = "CloseButton"
     CloseButton.Parent = TitleBar
@@ -130,7 +117,6 @@ function UILibrary:CreateWindow(options)
     CloseCorner.CornerRadius = UDim.new(0, 4)
     CloseCorner.Parent = CloseButton
 
-    -- Tab Container
     local TabContainer = Instance.new("Frame")
     TabContainer.Name = "TabContainer"
     TabContainer.Parent = MainFrame
@@ -151,7 +137,6 @@ function UILibrary:CreateWindow(options)
     TabPadding.PaddingLeft = UDim.new(0, 10)
     TabPadding.PaddingRight = UDim.new(0, 5)
 
-    -- Content Container
     local ContentContainer = Instance.new("Frame")
     ContentContainer.Name = "ContentContainer"
     ContentContainer.Parent = MainFrame
@@ -159,7 +144,6 @@ function UILibrary:CreateWindow(options)
     ContentContainer.Position = UDim2.new(0, 150, 0, 35)
     ContentContainer.Size = UDim2.new(1, -150, 1, -35)
 
-    -- Make draggable
     if windowData.Draggable then
         local dragging = false
         local dragStart = nil
@@ -176,8 +160,9 @@ function UILibrary:CreateWindow(options)
         UserInputService.InputChanged:Connect(function(input)
             if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
                 local delta = input.Position - dragStart
-                MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-                Shadow.Position = UDim2.new(0, MainFrame.Position.X.Offset + 5, 0, MainFrame.Position.Y.Offset + 5)
+                local newPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+                MainFrame.Position = newPos
+                Shadow.Position = UDim2.new(newPos.X.Scale, newPos.X.Offset + 5, newPos.Y.Scale, newPos.Y.Offset + 5)
             end
         end)
 
@@ -188,7 +173,6 @@ function UILibrary:CreateWindow(options)
         end)
     end
 
-    -- Close button functionality
     CloseButton.MouseButton1Click:Connect(function()
         TweenService:Create(MainFrame, Config.Animations.Fast, {Size = UDim2.new(0, 0, 0, 0)}):Play()
         TweenService:Create(Shadow, Config.Animations.Fast, {Size = UDim2.new(0, 0, 0, 0)}):Play()
@@ -196,7 +180,6 @@ function UILibrary:CreateWindow(options)
         ScreenGui:Destroy()
     end)
 
-    -- Window object
     local Window = {}
     Window.MainFrame = MainFrame
     Window.TabContainer = TabContainer
@@ -211,7 +194,6 @@ function UILibrary:CreateWindow(options)
             Visible = true
         }
 
-        -- Tab Button
         local TabButton = Instance.new("TextButton")
         TabButton.Name = tabData.Name .. "Tab"
         TabButton.Parent = TabContainer
@@ -232,7 +214,6 @@ function UILibrary:CreateWindow(options)
         TabPadding.Parent = TabButton
         TabPadding.PaddingLeft = UDim.new(0, 12)
 
-        -- Tab Content
         local TabContent = Instance.new("ScrollingFrame")
         TabContent.Name = tabData.Name .. "Content"
         TabContent.Parent = ContentContainer
@@ -258,14 +239,11 @@ function UILibrary:CreateWindow(options)
         ContentPadding.PaddingRight = UDim.new(0, 15)
         ContentPadding.PaddingBottom = UDim.new(0, 15)
 
-        -- Update canvas size when content changes
         ContentList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
             TabContent.CanvasSize = UDim2.new(0, 0, 0, ContentList.AbsoluteContentSize.Y + 30)
         end)
 
-        -- Tab switching logic
         TabButton.MouseButton1Click:Connect(function()
-            -- Hide all tabs
             for _, tab in pairs(windowData.Tabs) do
                 tab.Content.Visible = false
                 TweenService:Create(tab.Button, Config.Animations.Fast, {
@@ -274,7 +252,6 @@ function UILibrary:CreateWindow(options)
                 }):Play()
             end
 
-            -- Show current tab
             TabContent.Visible = true
             windowData.CurrentTab = tabData.Name
             TweenService:Create(TabButton, Config.Animations.Fast, {
@@ -283,7 +260,6 @@ function UILibrary:CreateWindow(options)
             }):Play()
         end)
 
-        -- Hover effects
         TabButton.MouseEnter:Connect(function()
             if windowData.CurrentTab ~= tabData.Name then
                 TweenService:Create(TabButton, Config.Animations.Fast, {BackgroundColor3 = Config.Colors.Primary}):Play()
@@ -296,7 +272,6 @@ function UILibrary:CreateWindow(options)
             end
         end)
 
-        -- Store tab data
         local tab = {
             Button = TabButton,
             Content = TabContent,
@@ -304,12 +279,10 @@ function UILibrary:CreateWindow(options)
         }
         windowData.Tabs[tabData.Name] = tab
 
-        -- Select first tab automatically
         if #windowData.Tabs == 1 then
             TabButton.MouseButton1Click:Fire()
         end
 
-        -- Tab object with methods
         local Tab = {}
         Tab.Content = TabContent
         Tab.Data = tabData
@@ -337,7 +310,6 @@ function UILibrary:CreateWindow(options)
             ButtonCorner.CornerRadius = UDim.new(0, 6)
             ButtonCorner.Parent = Button
 
-            -- Button functionality
             Button.MouseButton1Click:Connect(function()
                 TweenService:Create(Button, Config.Animations.Fast, {BackgroundColor3 = Config.Colors.Accent}):Play()
                 wait(0.1)
@@ -348,7 +320,6 @@ function UILibrary:CreateWindow(options)
                 end)
             end)
 
-            -- Hover effects
             Button.MouseEnter:Connect(function()
                 TweenService:Create(Button, Config.Animations.Fast, {BackgroundColor3 = Config.Colors.Primary}):Play()
             end)
@@ -627,4 +598,5 @@ function UILibrary:CreateWindow(options)
 
     return Window
 end
+
 return UILibrary
