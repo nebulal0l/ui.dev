@@ -224,7 +224,7 @@ function uidev:CreateWindow(options)
 
     function Window:CreateTab(options)
         options = options or {}
-        local CurrentTheme = self.Data.CurrentTheme
+        local CurrentTheme = Window.Theme -- Use the Window reference directly
         
         local tabData = {
             Name = options.Name or "New Tab",
