@@ -224,14 +224,14 @@ function uidev:CreateWindow(options)
 
     function Window:CreateTab(options)
         options = options or {}
-        local CurrentTheme = Window.Theme -- Add this line to access the theme
+        local CurrentTheme = self.Theme -- Change this line
         
         local tabData = {
             Name = options.Name or "New Tab",
             Icon = options.Icon or "",
             Visible = true
         }
-        
+
         local TabButton = Instance.new("TextButton")
         TabButton.Name = tabData.Name .. "Tab"
         TabButton.Parent = TabContainer
