@@ -1,5 +1,5 @@
-local UILibrary = {}
-UILibrary.__index = UILibrary
+local uidev = {}
+uidev.__index = uidev
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -27,7 +27,7 @@ local Config = {
     }
 }
 
-function UILibrary:CreateWindow(options)
+function uidev:CreateWindow(options)
     options = options or {}
     local windowData = {
         Title = options.Title or "UI Library",
@@ -39,7 +39,7 @@ function UILibrary:CreateWindow(options)
     }
 
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "UILibrary_" .. windowData.Title
+    ScreenGui.Name = "uidev_" .. windowData.Title
     ScreenGui.Parent = PlayerGui
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
@@ -599,4 +599,4 @@ function UILibrary:CreateWindow(options)
     return Window
 end
 
-return UILibrary
+return uidev
