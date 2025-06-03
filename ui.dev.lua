@@ -65,7 +65,7 @@ function uidev:CreateWindow(options)
     local windowData = {
         Title = options.Title or "UI Library",
         Size = options.Size or UDim2.new(0, 580, 0, 420),
-        CurrentTheme = options.Theme or "Dark",
+        windowData.CurrentTheme = CurrentTheme
         Draggable = options.Draggable ~= false,
         Tabs = {},
         CurrentTab = nil
@@ -224,7 +224,7 @@ function uidev:CreateWindow(options)
 
     function Window:CreateTab(options)
         options = options or {}
-        local CurrentTheme = self.Theme -- Change this line
+        local CurrentTheme = self.Data.CurrentTheme
         
         local tabData = {
             Name = options.Name or "New Tab",
