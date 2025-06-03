@@ -21,8 +21,8 @@ local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
-local Config = {
-    Colors = {
+local Themes = {
+    Dark = {
         Primary = Color3.fromRGB(45, 45, 55),
         Secondary = Color3.fromRGB(35, 35, 45),
         Accent = Color3.fromRGB(85, 170, 255),
@@ -32,6 +32,39 @@ local Config = {
         Warning = Color3.fromRGB(241, 196, 15),
         Error = Color3.fromRGB(231, 76, 60)
     },
+    Grape = {
+        Primary = Color3.fromRGB(50, 35, 70),
+        Secondary = Color3.fromRGB(40, 25, 60),
+        Accent = Color3.fromRGB(155, 89, 182),
+        Text = Color3.fromRGB(255, 255, 255),
+        TextDark = Color3.fromRGB(200, 180, 220),
+        Success = Color3.fromRGB(46, 204, 113),
+        Warning = Color3.fromRGB(241, 196, 15),
+        Error = Color3.fromRGB(231, 76, 60)
+    },
+    Blurple = {
+        Primary = Color3.fromRGB(54, 57, 63),
+        Secondary = Color3.fromRGB(47, 49, 54),
+        Accent = Color3.fromRGB(88, 101, 242),
+        Text = Color3.fromRGB(255, 255, 255),
+        TextDark = Color3.fromRGB(181, 186, 193),
+        Success = Color3.fromRGB(67, 181, 129),
+        Warning = Color3.fromRGB(250, 166, 26),
+        Error = Color3.fromRGB(237, 66, 69)
+    },
+    Blood = {
+        Primary = Color3.fromRGB(60, 20, 20),
+        Secondary = Color3.fromRGB(50, 15, 15),
+        Accent = Color3.fromRGB(220, 20, 60),
+        Text = Color3.fromRGB(255, 255, 255),
+        TextDark = Color3.fromRGB(200, 150, 150),
+        Success = Color3.fromRGB(46, 204, 113),
+        Warning = Color3.fromRGB(241, 196, 15),
+        Error = Color3.fromRGB(139, 0, 0)
+    }
+}
+
+local Config = {
     Animations = {
         Fast = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
         Medium = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
@@ -49,6 +82,8 @@ function uidev:CreateWindow(options)
         Tabs = {},
         CurrentTab = nil
     }
+
+    local CurrentTheme = Themes[windowData.Theme] or Themes.Dark
 
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "uidev_" .. windowData.Title
@@ -72,7 +107,7 @@ function uidev:CreateWindow(options)
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.Parent = ScreenGui
-    MainFrame.BackgroundColor3 = Config.Colors.Primary
+    MainFrame.BackgroundColor3 = CurrentTheme.Primary
     MainFrame.BorderSizePixel = 0
     MainFrame.Position = UDim2.new(0.5, -windowData.Size.X.Offset/2, 0.5, -windowData.Size.Y.Offset/2)
     MainFrame.Size = windowData.Size
@@ -86,7 +121,7 @@ function uidev:CreateWindow(options)
     local TitleBar = Instance.new("Frame")
     TitleBar.Name = "TitleBar"
     TitleBar.Parent = MainFrame
-    TitleBar.BackgroundColor3 = Config.Colors.Secondary
+    TitleBar.BackgroundColor3 = CurrentTheme.Secondary
     TitleBar.BorderSizePixel = 0
     TitleBar.Size = UDim2.new(1, 0, 0, 35)
 
@@ -96,7 +131,7 @@ function uidev:CreateWindow(options)
 
     local TitleFix = Instance.new("Frame")
     TitleFix.Parent = TitleBar
-    TitleFix.BackgroundColor3 = Config.Colors.Secondary
+    TitleFix.BackgroundColor3 = CurrentTheme.Secondary
     TitleFix.BorderSizePixel = 0
     TitleFix.Position = UDim2.new(0, 0, 0.7, 0)
     TitleFix.Size = UDim2.new(1, 0, 0.3, 0)
@@ -109,20 +144,20 @@ function uidev:CreateWindow(options)
     TitleLabel.Size = UDim2.new(1, -50, 1, 0)
     TitleLabel.Font = Enum.Font.GothamBold
     TitleLabel.Text = windowData.Title
-    TitleLabel.TextColor3 = Config.Colors.Text
+    TitleLabel.TextColor3 = CurrentTheme.Text
     TitleLabel.TextSize = 14
     TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
     local CloseButton = Instance.new("TextButton")
     CloseButton.Name = "CloseButton"
     CloseButton.Parent = TitleBar
-    CloseButton.BackgroundColor3 = Config.Colors.Error
+    CloseButton.BackgroundColor3 = CurrentTheme.Error
     CloseButton.BorderSizePixel = 0
     CloseButton.Position = UDim2.new(1, -30, 0, 5)
     CloseButton.Size = UDim2.new(0, 25, 0, 25)
     CloseButton.Font = Enum.Font.GothamBold
     CloseButton.Text = "×"
-    CloseButton.TextColor3 = Config.Colors.Text
+    CloseButton.TextColor3 = CurrentTheme.Text
     CloseButton.TextSize = 16
 
     local CloseCorner = Instance.new("UICorner")
@@ -197,6 +232,7 @@ function uidev:CreateWindow(options)
     Window.TabContainer = TabContainer
     Window.ContentContainer = ContentContainer
     Window.Data = windowData
+    Window.Theme = CurrentTheme
 
     function Window:CreateTab(options)
         options = options or {}
@@ -209,12 +245,12 @@ function uidev:CreateWindow(options)
         local TabButton = Instance.new("TextButton")
         TabButton.Name = tabData.Name .. "Tab"
         TabButton.Parent = TabContainer
-        TabButton.BackgroundColor3 = Config.Colors.Secondary
+        TabButton.BackgroundColor3 = CurrentTheme.Secondary
         TabButton.BorderSizePixel = 0
         TabButton.Size = UDim2.new(1, 0, 0, 35)
         TabButton.Font = Enum.Font.Gotham
         TabButton.Text = tabData.Icon .. " " .. tabData.Name
-        TabButton.TextColor3 = Config.Colors.TextDark
+        TabButton.TextColor3 = CurrentTheme.TextDark
         TabButton.TextSize = 12
         TabButton.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -233,7 +269,7 @@ function uidev:CreateWindow(options)
         TabContent.BorderSizePixel = 0
         TabContent.Size = UDim2.new(1, 0, 1, 0)
         TabContent.ScrollBarThickness = 4
-        TabContent.ScrollBarImageColor3 = Config.Colors.Accent
+        TabContent.ScrollBarImageColor3 = CurrentTheme.Accent
         TabContent.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
         TabContent.Visible = false
 
@@ -259,28 +295,28 @@ function uidev:CreateWindow(options)
             for _, tab in pairs(windowData.Tabs) do
                 tab.Content.Visible = false
                 TweenService:Create(tab.Button, Config.Animations.Fast, {
-                    BackgroundColor3 = Config.Colors.Secondary,
-                    TextColor3 = Config.Colors.TextDark
+                    BackgroundColor3 = CurrentTheme.Secondary,
+                    TextColor3 = CurrentTheme.TextDark
                 }):Play()
             end
 
             TabContent.Visible = true
             windowData.CurrentTab = tabData.Name
             TweenService:Create(TabButton, Config.Animations.Fast, {
-                BackgroundColor3 = Config.Colors.Accent,
-                TextColor3 = Config.Colors.Text
+                BackgroundColor3 = CurrentTheme.Accent,
+                TextColor3 = CurrentTheme.Text
             }):Play()
         end)
 
         TabButton.MouseEnter:Connect(function()
             if windowData.CurrentTab ~= tabData.Name then
-                TweenService:Create(TabButton, Config.Animations.Fast, {BackgroundColor3 = Config.Colors.Primary}):Play()
+                TweenService:Create(TabButton, Config.Animations.Fast, {BackgroundColor3 = CurrentTheme.Primary}):Play()
             end
         end)
 
         TabButton.MouseLeave:Connect(function()
             if windowData.CurrentTab ~= tabData.Name then
-                TweenService:Create(TabButton, Config.Animations.Fast, {BackgroundColor3 = Config.Colors.Secondary}):Play()
+                TweenService:Create(TabButton, Config.Animations.Fast, {BackgroundColor3 = CurrentTheme.Secondary}):Play()
             end
         end)
 
@@ -310,12 +346,12 @@ function uidev:CreateWindow(options)
             local Button = Instance.new("TextButton")
             Button.Name = buttonData.Name
             Button.Parent = TabContent
-            Button.BackgroundColor3 = Config.Colors.Secondary
+            Button.BackgroundColor3 = CurrentTheme.Secondary
             Button.BorderSizePixel = 0
             Button.Size = UDim2.new(1, -10, 0, 35)
             Button.Font = Enum.Font.Gotham
             Button.Text = buttonData.Name
-            Button.TextColor3 = Config.Colors.Text
+            Button.TextColor3 = CurrentTheme.Text
             Button.TextSize = 12
 
             local ButtonCorner = Instance.new("UICorner")
@@ -323,9 +359,9 @@ function uidev:CreateWindow(options)
             ButtonCorner.Parent = Button
 
             Button.MouseButton1Click:Connect(function()
-                TweenService:Create(Button, Config.Animations.Fast, {BackgroundColor3 = Config.Colors.Accent}):Play()
+                TweenService:Create(Button, Config.Animations.Fast, {BackgroundColor3 = CurrentTheme.Accent}):Play()
                 wait(0.1)
-                TweenService:Create(Button, Config.Animations.Fast, {BackgroundColor3 = Config.Colors.Secondary}):Play()
+                TweenService:Create(Button, Config.Animations.Fast, {BackgroundColor3 = CurrentTheme.Secondary}):Play()
                 
                 spawn(function()
                     buttonData.Callback()
@@ -333,11 +369,11 @@ function uidev:CreateWindow(options)
             end)
 
             Button.MouseEnter:Connect(function()
-                TweenService:Create(Button, Config.Animations.Fast, {BackgroundColor3 = Config.Colors.Primary}):Play()
+                TweenService:Create(Button, Config.Animations.Fast, {BackgroundColor3 = CurrentTheme.Primary}):Play()
             end)
 
             Button.MouseLeave:Connect(function()
-                TweenService:Create(Button, Config.Animations.Fast, {BackgroundColor3 = Config.Colors.Secondary}):Play()
+                TweenService:Create(Button, Config.Animations.Fast, {BackgroundColor3 = CurrentTheme.Secondary}):Play()
             end)
 
             return Button
@@ -354,7 +390,7 @@ function uidev:CreateWindow(options)
             local ToggleFrame = Instance.new("Frame")
             ToggleFrame.Name = toggleData.Name .. "Toggle"
             ToggleFrame.Parent = TabContent
-            ToggleFrame.BackgroundColor3 = Config.Colors.Secondary
+            ToggleFrame.BackgroundColor3 = CurrentTheme.Secondary
             ToggleFrame.BorderSizePixel = 0
             ToggleFrame.Size = UDim2.new(1, -10, 0, 35)
 
@@ -369,13 +405,13 @@ function uidev:CreateWindow(options)
             ToggleLabel.Size = UDim2.new(1, -50, 1, 0)
             ToggleLabel.Font = Enum.Font.Gotham
             ToggleLabel.Text = toggleData.Name
-            ToggleLabel.TextColor3 = Config.Colors.Text
+            ToggleLabel.TextColor3 = CurrentTheme.Text
             ToggleLabel.TextSize = 12
             ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
             local ToggleButton = Instance.new("TextButton")
             ToggleButton.Parent = ToggleFrame
-            ToggleButton.BackgroundColor3 = toggleData.Default and Config.Colors.Success or Config.Colors.Error
+            ToggleButton.BackgroundColor3 = toggleData.Default and CurrentTheme.Success or CurrentTheme.Error
             ToggleButton.BorderSizePixel = 0
             ToggleButton.Position = UDim2.new(1, -30, 0, 7)
             ToggleButton.Size = UDim2.new(0, 21, 0, 21)
@@ -389,7 +425,7 @@ function uidev:CreateWindow(options)
 
             ToggleButton.MouseButton1Click:Connect(function()
                 isToggled = not isToggled
-                local newColor = isToggled and Config.Colors.Success or Config.Colors.Error
+                local newColor = isToggled and CurrentTheme.Success or CurrentTheme.Error
                 TweenService:Create(ToggleButton, Config.Animations.Fast, {BackgroundColor3 = newColor}):Play()
                 
                 spawn(function()
@@ -413,7 +449,7 @@ function uidev:CreateWindow(options)
             local SliderFrame = Instance.new("Frame")
             SliderFrame.Name = sliderData.Name .. "Slider"
             SliderFrame.Parent = TabContent
-            SliderFrame.BackgroundColor3 = Config.Colors.Secondary
+            SliderFrame.BackgroundColor3 = CurrentTheme.Secondary
             SliderFrame.BorderSizePixel = 0
             SliderFrame.Size = UDim2.new(1, -10, 0, 50)
 
@@ -428,13 +464,13 @@ function uidev:CreateWindow(options)
             SliderLabel.Size = UDim2.new(1, -12, 0, 25)
             SliderLabel.Font = Enum.Font.Gotham
             SliderLabel.Text = sliderData.Name .. ": " .. sliderData.Default
-            SliderLabel.TextColor3 = Config.Colors.Text
+            SliderLabel.TextColor3 = CurrentTheme.Text
             SliderLabel.TextSize = 12
             SliderLabel.TextXAlignment = Enum.TextXAlignment.Left
 
             local SliderTrack = Instance.new("Frame")
             SliderTrack.Parent = SliderFrame
-            SliderTrack.BackgroundColor3 = Config.Colors.Primary
+            SliderTrack.BackgroundColor3 = CurrentTheme.Primary
             SliderTrack.BorderSizePixel = 0
             SliderTrack.Position = UDim2.new(0, 12, 0, 30)
             SliderTrack.Size = UDim2.new(1, -24, 0, 6)
@@ -445,7 +481,7 @@ function uidev:CreateWindow(options)
 
             local SliderFill = Instance.new("Frame")
             SliderFill.Parent = SliderTrack
-            SliderFill.BackgroundColor3 = Config.Colors.Accent
+            SliderFill.BackgroundColor3 = CurrentTheme.Accent
             SliderFill.BorderSizePixel = 0
             SliderFill.Size = UDim2.new((sliderData.Default - sliderData.Min) / (sliderData.Max - sliderData.Min), 0, 1, 0)
 
@@ -455,7 +491,7 @@ function uidev:CreateWindow(options)
 
             local SliderButton = Instance.new("TextButton")
             SliderButton.Parent = SliderTrack
-            SliderButton.BackgroundColor3 = Config.Colors.Text
+            SliderButton.BackgroundColor3 = CurrentTheme.Text
             SliderButton.BorderSizePixel = 0
             SliderButton.Position = UDim2.new((sliderData.Default - sliderData.Min) / (sliderData.Max - sliderData.Min), -6, 0.5, -6)
             SliderButton.Size = UDim2.new(0, 12, 0, 12)
@@ -513,7 +549,7 @@ function uidev:CreateWindow(options)
             local InputFrame = Instance.new("Frame")
             InputFrame.Name = inputData.Name .. "Input"
             InputFrame.Parent = TabContent
-            InputFrame.BackgroundColor3 = Config.Colors.Secondary
+            InputFrame.BackgroundColor3 = CurrentTheme.Secondary
             InputFrame.BorderSizePixel = 0
             InputFrame.Size = UDim2.new(1, -10, 0, 60)
 
@@ -528,21 +564,21 @@ function uidev:CreateWindow(options)
             InputLabel.Size = UDim2.new(1, -12, 0, 20)
             InputLabel.Font = Enum.Font.Gotham
             InputLabel.Text = inputData.Name
-            InputLabel.TextColor3 = Config.Colors.Text
+            InputLabel.TextColor3 = CurrentTheme.Text
             InputLabel.TextSize = 12
             InputLabel.TextXAlignment = Enum.TextXAlignment.Left
 
             local InputBox = Instance.new("TextBox")
             InputBox.Parent = InputFrame
-            InputBox.BackgroundColor3 = Config.Colors.Primary
+            InputBox.BackgroundColor3 = CurrentTheme.Primary
             InputBox.BorderSizePixel = 0
             InputBox.Position = UDim2.new(0, 12, 0, 30)
             InputBox.Size = UDim2.new(1, -24, 0, 25)
             InputBox.Font = Enum.Font.Gotham
             InputBox.PlaceholderText = inputData.Placeholder
-            InputBox.PlaceholderColor3 = Config.Colors.TextDark
+            InputBox.PlaceholderColor3 = CurrentTheme.TextDark
             InputBox.Text = ""
-            InputBox.TextColor3 = Config.Colors.Text
+            InputBox.TextColor3 = CurrentTheme.Text
             InputBox.TextSize = 11
             InputBox.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -570,13 +606,13 @@ function uidev:CreateWindow(options)
             options = options or {}
             local labelData = {
                 Text = options.Text or "Label",
-                Color = options.Color or Config.Colors.Text
+                Color = options.Color or CurrentTheme.Text
             }
 
             local Label = Instance.new("TextLabel")
             Label.Name = "Label"
             Label.Parent = TabContent
-            Label.BackgroundColor3 = Config.Colors.Secondary
+            Label.BackgroundColor3 = CurrentTheme.Secondary
             Label.BorderSizePixel = 0
             Label.Size = UDim2.new(1, -10, 0, 30)
             Label.Font = Enum.Font.Gotham
