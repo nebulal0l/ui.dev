@@ -11,14 +11,14 @@ local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
 local Config = {
     Colors = {
-        Primary = Color3.fromRGB(25, 25, 35),
-        Secondary = Color3.fromRGB(18, 18, 28),
-        Accent = Color3.fromRGB(180, 100, 255),
-        Text = Color3.fromRGB(245, 245, 255),
-        TextDark = Color3.fromRGB(180, 180, 200),
-        Success = Color3.fromRGB(0, 230, 118),
-        Warning = Color3.fromRGB(255, 193, 7),
-        Error = Color3.fromRGB(255, 82, 82)
+        Primary = Color3.fromRGB(45, 45, 55),
+        Secondary = Color3.fromRGB(35, 35, 45),
+        Accent = Color3.fromRGB(85, 170, 255),
+        Text = Color3.fromRGB(255, 255, 255),
+        TextDark = Color3.fromRGB(200, 200, 200),
+        Success = Color3.fromRGB(46, 204, 113),
+        Warning = Color3.fromRGB(241, 196, 15),
+        Error = Color3.fromRGB(231, 76, 60)
     },
     Animations = {
         Fast = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
@@ -35,7 +35,8 @@ function uidev:CreateWindow(options)
         Theme = options.Theme or "Dark",
         Draggable = options.Draggable ~= false,
         Tabs = {},
-        CurrentTab = nil
+        CurrentTab = nil,
+        Visible = options.Visible == nil and true or options.Visible -- Default to visible unless specified
     }
 
     local ScreenGui = Instance.new("ScreenGui")
@@ -592,9 +593,38 @@ function uidev:CreateWindow(options)
         TitleLabel.Text = newTitle
     end
 
+    -- Function to update UI visibility based on windowData.Visible
+    local function updateUI()
+        MainFrame.Visible = windowData.Visible
+        Shadow.Visible = windowData.Visible
+    end
+
+    -- Toggle function
+    function Window:Toggle()
+        windowData.Visible = not windowData.Visible
+        updateUI()
+        return windowData.Visible
+    end
+
+    -- Connect Insert key to toggle
+    local insertConnection
+    insertConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if not gameProcessed and input.KeyCode == Enum.KeyCode.Insert then
+            Window:Toggle()
+        end
+    end)
+
+
     function Window:Destroy()
+        if insertConnection then
+            insertConnection:Disconnect()
+            insertConnection = nil
+        end
         ScreenGui:Destroy()
     end
+    
+    -- Initialize visibility
+    updateUI()
 
     return Window
 end
