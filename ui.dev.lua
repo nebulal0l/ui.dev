@@ -567,7 +567,7 @@ end
 
             local LabelFrame = Instance.new("Frame")
             LabelFrame.Name = "Label_" .. labelData.Text:gsub("%s+", "_")
-            LabelFrame.Parent = self.Content
+            LabelFrame.Parent = TabContent
             LabelFrame.BackgroundTransparency = 1
             LabelFrame.Size = UDim2.new(1, -10, 0, 20)
             LabelFrame.BorderSizePixel = 0
