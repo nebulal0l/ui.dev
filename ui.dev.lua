@@ -159,11 +159,10 @@ function uidev:CreateWindow(options)
 
         TitleBar.InputBegan:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                local mousePos = UserInputService:GetMouseLocation()
                 dragging = true
-                dragStart = Vector2.new(mousePos.X, mousePos.Y)
+                dragStart = input.Position
                 startPos = MainFrame.Position
-                lastDragPos = dragStart
+                lastDragPos = input.Position
                 lastDragTime = tick()
             end
         end)
@@ -174,22 +173,19 @@ function uidev:CreateWindow(options)
                 local deltaTime = currentTime - lastDragTime
                 
                 if deltaTime > 0 then
-                    local mousePos = UserInputService:GetMouseLocation()
-                    local currentMousePos = Vector2.new(mousePos.X, mousePos.Y)
-                    
                     -- Calculate new position based on mouse movement
-                    local deltaX = currentMousePos.X - dragStart.X
-                    local deltaY = currentMousePos.Y - dragStart.Y
+                    local deltaX = input.Position.X - dragStart.X
+                    local deltaY = input.Position.Y - dragStart.Y
                     
                     local newPos = UDim2.new(
                         startPos.X.Scale,
-                        math.floor(startPos.X.Offset + deltaX + 0.5),  -- Round to nearest integer
+                        startPos.X.Offset + deltaX,
                         startPos.Y.Scale,
-                        math.floor(startPos.Y.Offset + deltaY + 0.5)   -- Round to nearest integer
+                        startPos.Y.Offset + deltaY
                     )
                     
                     updateWindowPosition(newPos)
-                    lastDragPos = currentMousePos
+                    lastDragPos = input.Position
                     lastDragTime = currentTime
                 end
             end
