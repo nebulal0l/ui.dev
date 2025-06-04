@@ -43,6 +43,12 @@ local SettingsTab = UI:CreateTab({
    Icon = "🔧"
 })
 
+local ExtraTab = UI:CreateTab({
+   Name = "Extra", 
+   Icon = "🔰"
+})
+
+
 -- Add elements to MainTab
 MainTab:AddButton({
    Name = "Button",
@@ -105,6 +111,13 @@ SettingsTab:AddButton({
    Name = "Destory Library",
    Callback = function()
        UI:Destroy()
+   end
+})
+
+ExtraTab:AddButton({
+   Name = "Infinite Yield",
+   Callback = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
    end
 })
 ```
