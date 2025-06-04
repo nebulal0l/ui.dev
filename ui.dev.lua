@@ -587,16 +587,16 @@ function uidev:CreateWindow(options)
         return Tab
     end
 
-    function UI:SetTitle(newTitle)
+    function Window:SetTitle(newTitle)
         windowData.Title = newTitle
         TitleLabel.Text = newTitle
     end
 
-    function UI:Destroy()
+    function Window:Destroy()
         ScreenGui:Destroy()
     end
 
-    return UI
+    return Window
 end
 
 return uidev
