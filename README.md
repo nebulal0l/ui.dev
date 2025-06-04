@@ -104,7 +104,7 @@ SettingsTab:AddInput({
 SettingsTab:AddButton({
    Name = "Destory Library",
    Callback = function()
-       UI:Destory()
+       UI:Destroy()
    end
 })
 ```
