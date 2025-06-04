@@ -9,70 +9,8 @@ local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
-local function createLoadingScreen()
-    local loadingScreen = Instance.new("ScreenGui")
-    loadingScreen.Name = "LoadingScreen"
-    loadingScreen.IgnoreGuiInset = true
-    loadingScreen.ResetOnSpawn = false
-    loadingScreen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    
-    local background = Instance.new("Frame")
-    background.Name = "Background"
-    background.Size = UDim2.new(1, 0, 1, 0)
-    background.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    background.BorderSizePixel = 0
-    background.Parent = loadingScreen
-    
-    local loadingText = Instance.new("TextLabel")
-    loadingText.Name = "LoadingText"
-    loadingText.AnchorPoint = Vector2.new(0.5, 0.5)
-    loadingText.Position = UDim2.new(0.5, 0, 0.5, -20)
-    loadingText.Size = UDim2.new(0, 200, 0, 40)
-    loadingText.BackgroundTransparency = 1
-    loadingText.Font = Enum.Font.GothamBold
-    loadingText.Text = "Loading..."
-    loadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    loadingText.TextSize = 24
-    loadingText.Parent = background
-    
-    local loadingBarBackground = Instance.new("Frame")
-    loadingBarBackground.Name = "LoadingBarBackground"
-    loadingBarBackground.AnchorPoint = Vector2.new(0.5, 0.5)
-    loadingBarBackground.Position = UDim2.new(0.5, 0, 0.5, 20)
-    loadingBarBackground.Size = UDim2.new(0.4, 0, 0, 4)
-    loadingBarBackground.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
-    loadingBarBackground.BorderSizePixel = 0
-    loadingBarBackground.ClipsDescendants = true
-    loadingBarBackground.Parent = background
-    
-    local loadingBar = Instance.new("Frame")
-    loadingBar.Name = "LoadingBar"
-    loadingBar.Size = UDim2.new(0, 0, 1, 0)
-    loadingBar.BackgroundColor3 = Color3.fromRGB(85, 170, 255)
-    loadingBar.BorderSizePixel = 0
-    loadingBar.Parent = loadingBarBackground
-    
-    -- Animate loading bar
-    spawn(function()
-        while true do
-            for i = 0, 1, 0.01 do
-                loadingBar.Size = UDim2.new(i, 0, 1, 0)
-                wait(0.02)
-            end
-            for i = 1, 0, -0.01 do
-                loadingBar.Size = UDim2.new(i, 0, 1, 0)
-                wait(0.02)
-            end
-        end
-    end)
-    
-    return loadingScreen
-end
-
--- Theme system
-local Themes = {
-    Dark = {
-        Name = "Dark",
+local Config = {
+    Colors = {
         Primary = Color3.fromRGB(45, 45, 55),
         Secondary = Color3.fromRGB(35, 35, 45),
         Accent = Color3.fromRGB(85, 170, 255),
@@ -80,41 +18,8 @@ local Themes = {
         TextDark = Color3.fromRGB(200, 200, 200),
         Success = Color3.fromRGB(46, 204, 113),
         Warning = Color3.fromRGB(241, 196, 15),
-        Error = Color3.fromRGB(231, 76, 60),
-        Border = Color3.fromRGB(60, 60, 70),
-        Hover = Color3.fromRGB(65, 65, 75)
+        Error = Color3.fromRGB(231, 76, 60)
     },
-    Light = {
-        Name = "Light",
-        Primary = Color3.fromRGB(240, 240, 245),
-        Secondary = Color3.fromRGB(250, 250, 255),
-        Accent = Color3.fromRGB(0, 120, 215),
-        Text = Color3.fromRGB(20, 20, 20),
-        TextDark = Color3.fromRGB(100, 100, 100),
-        Success = Color3.fromRGB(46, 204, 113),
-        Warning = Color3.fromRGB(230, 180, 0),
-        Error = Color3.fromRGB(232, 17, 35),
-        Border = Color3.fromRGB(200, 200, 200),
-        Hover = Color3.fromRGB(220, 220, 230)
-    },
-    Nord = {
-        Name = "Nord",
-        Primary = Color3.fromRGB(46, 52, 64),
-        Secondary = Color3.fromRGB(59, 66, 82),
-        Accent = Color3.fromRGB(136, 192, 208),
-        Text = Color3.fromRGB(236, 239, 244),
-        TextDark = Color3.fromRGB(216, 222, 233),
-        Success = Color3.fromRGB(163, 190, 140),
-        Warning = Color3.fromRGB(235, 203, 139),
-        Error = Color3.fromRGB(191, 97, 106),
-        Border = Color3.fromRGB(76, 86, 106),
-        Hover = Color3.fromRGB(67, 76, 94)
-    }
-}
-
-local Config = {
-    CurrentTheme = "Dark",
-    Colors = Themes.Dark,
     Animations = {
         Fast = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
         Medium = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
@@ -122,87 +27,25 @@ local Config = {
     }
 }
 
--- Theme management functions
-function uidev:SetTheme(themeName)
-    if Themes[themeName] then
-        Config.CurrentTheme = themeName
-        Config.Colors = Themes[themeName]
-        return true
-    end
-    return false
-end
-
-function uidev:AddTheme(name, themeData)
-    if not themeData or not name then return false end
-    themeData.Name = name
-    Themes[name] = themeData
-    return true
-end
-
-function uidev:GetTheme(themeName)
-    return Themes[themeName]
-end
-
-function uidev:GetAvailableThemes()
-    local themeList = {}
-    for name, _ in pairs(Themes) do
-        table.insert(themeList, name)
-    end
-    return themeList
-end
-
 function uidev:CreateWindow(options)
     options = options or {}
-    
-    -- Set theme if specified
-    if options.Theme then
-        self:SetTheme(options.Theme)
-    end
-    
     local windowData = {
         Title = options.Title or "UI Library",
-        Size = options.Size or UDim2.new(0, 600, 0, 400),
+        Size = options.Size or UDim2.new(0, 580, 0, 420),
+        Theme = options.Theme or "Dark",
         Draggable = options.Draggable ~= false,
         Tabs = {},
-        CurrentTab = nil,
-        LoadingScreen = createLoadingScreen()
+        CurrentTab = nil
     }
-    
-    -- Rest of the window creation code will follow
-    local Window = {}
-    setmetatable(Window, { __index = self })
-    
-    -- Store window data
-    Window.Data = windowData
-    
-    -- Create the UI elements
+
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "uidev_" .. windowData.Title
     ScreenGui.Parent = PlayerGui
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    local MainFrame = Instance.new("Frame")
-    MainFrame.Name = "MainFrame"
-    MainFrame.Parent = ScreenGui
-    MainFrame.BackgroundColor3 = Config.Colors.Primary
-    MainFrame.BorderSizePixel = 0
-    MainFrame.Position = UDim2.new(0.5, -windowData.Size.X.Offset/2, 0.5, -windowData.Size.Y.Offset/2)
-    MainFrame.Size = windowData.Size
-    MainFrame.ClipsDescendants = true
-    MainFrame.ZIndex = 1
-    
-    -- Store references
-    Window.ScreenGui = ScreenGui
-    Window.MainFrame = MainFrame
-    
-    -- Return the window object
-    return Window
-end
-
-    -- Create shadow effect
     local Shadow = Instance.new("Frame")
     Shadow.Name = "Shadow"
-    Shadow.Parent = Window.ScreenGui
+    Shadow.Parent = ScreenGui
     Shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     Shadow.BackgroundTransparency = 0.7
     Shadow.BorderSizePixel = 0
@@ -214,15 +57,23 @@ end
     ShadowCorner.CornerRadius = UDim.new(0, 8)
     ShadowCorner.Parent = Shadow
 
-    -- Add corner radius to main frame
+    local MainFrame = Instance.new("Frame")
+    MainFrame.Name = "MainFrame"
+    MainFrame.Parent = ScreenGui
+    MainFrame.BackgroundColor3 = Config.Colors.Primary
+    MainFrame.BorderSizePixel = 0
+    MainFrame.Position = UDim2.new(0.5, -windowData.Size.X.Offset/2, 0.5, -windowData.Size.Y.Offset/2)
+    MainFrame.Size = windowData.Size
+    MainFrame.ClipsDescendants = true
+    MainFrame.ZIndex = 1
+
     local MainCorner = Instance.new("UICorner")
     MainCorner.CornerRadius = UDim.new(0, 8)
-    MainCorner.Parent = Window.MainFrame
+    MainCorner.Parent = MainFrame
 
-    -- Create title bar
     local TitleBar = Instance.new("Frame")
     TitleBar.Name = "TitleBar"
-    TitleBar.Parent = Window.MainFrame
+    TitleBar.Parent = MainFrame
     TitleBar.BackgroundColor3 = Config.Colors.Secondary
     TitleBar.BorderSizePixel = 0
     TitleBar.Size = UDim2.new(1, 0, 0, 35)
@@ -231,7 +82,6 @@ end
     TitleCorner.CornerRadius = UDim.new(0, 8)
     TitleCorner.Parent = TitleBar
 
-    -- Fix for corner radius at bottom of title bar
     local TitleFix = Instance.new("Frame")
     TitleFix.Parent = TitleBar
     TitleFix.BackgroundColor3 = Config.Colors.Secondary
@@ -239,7 +89,6 @@ end
     TitleFix.Position = UDim2.new(0, 0, 0.7, 0)
     TitleFix.Size = UDim2.new(1, 0, 0.3, 0)
 
-    -- Window title
     local TitleLabel = Instance.new("TextLabel")
     TitleLabel.Name = "TitleLabel"
     TitleLabel.Parent = TitleBar
@@ -252,7 +101,6 @@ end
     TitleLabel.TextSize = 14
     TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-    -- Close button
     local CloseButton = Instance.new("TextButton")
     CloseButton.Name = "CloseButton"
     CloseButton.Parent = TitleBar
@@ -269,10 +117,9 @@ end
     CloseCorner.CornerRadius = UDim.new(0, 4)
     CloseCorner.Parent = CloseButton
 
-    -- Tab container for the sidebar
     local TabContainer = Instance.new("Frame")
     TabContainer.Name = "TabContainer"
-    TabContainer.Parent = Window.MainFrame
+    TabContainer.Parent = MainFrame
     TabContainer.BackgroundTransparency = 1
     TabContainer.Position = UDim2.new(0, 0, 0, 35)
     TabContainer.Size = UDim2.new(0, 150, 1, -35)
@@ -333,38 +180,18 @@ end
         ScreenGui:Destroy()
     end)
 
-    -- Store UI element references in the Window object
-    Window.MainFrame = Window.MainFrame
-    Window.TitleBar = TitleBar
-    Window.TitleLabel = TitleLabel
-    Window.CloseButton = CloseButton
+    local Window = {}
+    Window.MainFrame = MainFrame
     Window.TabContainer = TabContainer
     Window.ContentContainer = ContentContainer
-    Window.Shadow = Shadow
     Window.Data = windowData
-    
-    -- Store theme information
-    Window.CurrentTheme = Config.CurrentTheme
-    Window.Themes = Themes
-    
-    -- Store references to all created UI elements for theme updates
-    Window.UIElements = {
-        MainFrame = Window.MainFrame,
-        TitleBar = TitleBar,
-        TitleLabel = TitleLabel,
-        CloseButton = CloseButton,
-        TabContainer = TabContainer,
-        ContentContainer = ContentContainer,
-        Shadow = Shadow
-    }
 
     function Window:CreateTab(options)
         options = options or {}
         local tabData = {
             Name = options.Name or "New Tab",
             Icon = options.Icon or "",
-            Visible = true,
-            Elements = {}
+            Visible = true
         }
 
         local TabButton = Instance.new("TextButton")
@@ -445,26 +272,21 @@ end
             end
         end)
 
-        local Tab = {}
-        Tab.Button = TabButton
-        Tab.Content = TabContent
-        Tab.Data = tabData
-        Tab.Elements = {}
-        
-        -- Store tab reference for theme updates
-        table.insert(Window.UIElements, {
+        local tab = {
             Button = TabButton,
-            Content = TabContent
-        })
-        
-        -- Add to window tabs
-        table.insert(windowData.Tabs, Tab)
-        
-        -- Select first tab by default
+            Content = TabContent,
+            Data = tabData
+        }
+        windowData.Tabs[tabData.Name] = tab
+
         if #windowData.Tabs == 1 then
             TabButton.MouseButton1Click:Fire()
         end
-        
+
+        local Tab = {}
+        Tab.Content = TabContent
+        Tab.Data = tabData
+
         function Tab:AddButton(options)
             options = options or {}
             local buttonData = {
@@ -668,37 +490,6 @@ end
             return SliderFrame
         end
 
-        function Tab:AddLabel(options)
-            options = options or {}
-            local labelData = {
-                Text = options.Text or "",
-                TextSize = options.TextSize or 14,
-                TextColor = options.Color or Config.Colors.Text,
-                TextXAlignment = options.TextXAlignment or Enum.TextXAlignment.Left
-            }
-
-            local LabelFrame = Instance.new("Frame")
-            LabelFrame.Name = "Label_" .. labelData.Text:gsub("%s+", "_")
-            LabelFrame.Parent = TabContent
-            LabelFrame.BackgroundTransparency = 1
-            LabelFrame.Size = UDim2.new(1, -10, 0, 20)
-            LabelFrame.BorderSizePixel = 0
-
-            local Label = Instance.new("TextLabel")
-            Label.Name = "Label"
-            Label.Parent = LabelFrame
-            Label.BackgroundTransparency = 1
-            Label.Size = UDim2.new(1, 0, 1, 0)
-            Label.Font = Enum.Font.Gotham
-            Label.Text = labelData.Text
-            Label.TextColor3 = labelData.TextColor
-            Label.TextSize = labelData.TextSize
-            Label.TextXAlignment = labelData.TextXAlignment
-            Label.TextYAlignment = Enum.TextYAlignment.Center
-
-            return LabelFrame
-        end
-
         function Tab:AddInput(options)
             options = options or {}
             local inputData = {
@@ -797,37 +588,8 @@ end
     end
 
     function Window:SetTitle(newTitle)
-        self.Data.Title = newTitle
-        self.TitleLabel.Text = newTitle
-    end
-    
-    function Window:SetTheme(themeName)
-        if self.Themes[themeName] then
-            self.CurrentTheme = themeName
-            self:UpdateTheme()
-            return true
-        end
-        return false
-    end
-    
-    function Window:UpdateTheme()
-        local theme = self.Themes[self.CurrentTheme]
-        if not theme then return end
-        
-        -- Update main window colors
-        self.MainFrame.BackgroundColor3 = theme.Primary
-        self.TitleBar.BackgroundColor3 = theme.Secondary
-        self.TitleLabel.TextColor3 = theme.Text
-        self.CloseButton.BackgroundColor3 = theme.Error
-        self.CloseButton.TextColor3 = theme.Text
-        
-        -- Update all tabs
-        for _, tab in ipairs(self.Data.Tabs) do
-            tab.Button.BackgroundColor3 = theme.Secondary
-            tab.Button.TextColor3 = theme.TextDark
-        end
-        
-        -- Update any other UI elements as needed
+        windowData.Title = newTitle
+        TitleLabel.Text = newTitle
     end
 
     function Window:Destroy()
