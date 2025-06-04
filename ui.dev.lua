@@ -149,33 +149,12 @@ function uidev:CreateWindow(options)
         local dragStart = nil
         local startPos = nil
         local lastDragTime = 0
-        local dragVelocity = Vector2.new(0, 0)
         local lastDragPos = nil
-        local dragConnection = nil
         local inputChangedConnection = nil
 
         local function updateWindowPosition(newPos)
             MainFrame.Position = newPos
             Shadow.Position = UDim2.new(newPos.X.Scale, newPos.X.Offset + 5, newPos.Y.Scale, newPos.Y.Offset + 5)
-        end
-
-        local function smoothDragUpdate()
-            while dragging and RunService.Heartbeat:Wait() do
-                if dragVelocity.Magnitude > 0.1 then
-                    local delta = dragVelocity * (1 - 0.2) -- Apply damping
-                    local currentPos = MainFrame.Position
-                    local newPos = UDim2.new(
-                        currentPos.X.Scale,
-                        currentPos.X.Offset + delta.X,
-                        currentPos.Y.Scale,
-                        currentPos.Y.Offset + delta.Y
-                    )
-                    updateWindowPosition(newPos)
-                    dragVelocity = delta
-                else
-                    dragVelocity = Vector2.new(0, 0)
-                end
-            end
         end
 
         TitleBar.InputBegan:Connect(function(input)
@@ -185,12 +164,8 @@ function uidev:CreateWindow(options)
                 startPos = MainFrame.Position
                 lastDragPos = input.Position
                 lastDragTime = tick()
-                
-                -- Start the smooth drag update loop
-                coroutine.wrap(smoothDragUpdate)()
             end
         end)
-
 
         inputChangedConnection = UserInputService.InputChanged:Connect(function(input)
             if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
@@ -198,39 +173,28 @@ function uidev:CreateWindow(options)
                 local deltaTime = currentTime - lastDragTime
                 
                 if deltaTime > 0 then
-                    local delta = input.Position - (lastDragPos or input.Position)
+                    -- Calculate new position based on mouse movement
+                    local deltaX = input.Position.X - dragStart.X
+                    local deltaY = input.Position.Y - dragStart.Y
                     
-                    -- Update velocity with smoothing
-                    local newVelocity = delta * (1 / math.max(0.016, deltaTime))
-                    dragVelocity = dragVelocity:Lerp(newVelocity, 0.5)
-                    
-                    -- Update position
                     local newPos = UDim2.new(
                         startPos.X.Scale,
-                        startPos.X.Offset + (input.Position.X - dragStart.X),
+                        startPos.X.Offset + deltaX,
                         startPos.Y.Scale,
-                        startPos.Y.Offset + (input.Position.Y - dragStart.Y)
+                        startPos.Y.Offset + deltaY
                     )
                     
                     updateWindowPosition(newPos)
-                    
                     lastDragPos = input.Position
                     lastDragTime = currentTime
                 end
             end
         end)
 
-
         UserInputService.InputEnded:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 then
                 dragging = false
                 lastDragPos = nil
-                
-                -- Clean up connections when done
-                if inputChangedConnection then
-                    inputChangedConnection:Disconnect()
-                    inputChangedConnection = nil
-                end
             end
         end)
     end
