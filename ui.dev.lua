@@ -556,6 +556,37 @@ end
             return SliderFrame
         end
 
+        function Tab:AddLabel(options)
+            options = options or {}
+            local labelData = {
+                Text = options.Text or "",
+                TextSize = options.TextSize or 14,
+                TextColor = options.Color or Config.Colors.Text,
+                TextXAlignment = options.TextXAlignment or Enum.TextXAlignment.Left
+            }
+
+            local LabelFrame = Instance.new("Frame")
+            LabelFrame.Name = "Label_" .. labelData.Text:gsub("%s+", "_")
+            LabelFrame.Parent = self.Content
+            LabelFrame.BackgroundTransparency = 1
+            LabelFrame.Size = UDim2.new(1, -10, 0, 20)
+            LabelFrame.BorderSizePixel = 0
+
+            local Label = Instance.new("TextLabel")
+            Label.Name = "Label"
+            Label.Parent = LabelFrame
+            Label.BackgroundTransparency = 1
+            Label.Size = UDim2.new(1, 0, 1, 0)
+            Label.Font = Enum.Font.Gotham
+            Label.Text = labelData.Text
+            Label.TextColor3 = labelData.TextColor
+            Label.TextSize = labelData.TextSize
+            Label.TextXAlignment = labelData.TextXAlignment
+            Label.TextYAlignment = Enum.TextYAlignment.Center
+
+            return LabelFrame
+        end
+
         function Tab:AddInput(options)
             options = options or {}
             local inputData = {
