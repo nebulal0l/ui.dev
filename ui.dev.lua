@@ -11,15 +11,17 @@ local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
 local Config = {
     Colors = {
-        Primary = Color3.fromRGB(45, 45, 55),
-        Secondary = Color3.fromRGB(35, 35, 45),
-        Accent = Color3.fromRGB(85, 170, 255),
-        Text = Color3.fromRGB(255, 255, 255),
-        TextDark = Color3.fromRGB(200, 200, 200),
-        Success = Color3.fromRGB(46, 204, 113),
-        Warning = Color3.fromRGB(241, 196, 15),
-        Error = Color3.fromRGB(231, 76, 60)
+        Primary = Color3.fromRGB(25, 25, 35),
+        Secondary = Color3.fromRGB(18, 18, 28),
+        Accent = Color3.fromRGB(180, 100, 255),
+        Text = Color3.fromRGB(245, 245, 255),
+        TextDark = Color3.fromRGB(180, 180, 200),
+        Success = Color3.fromRGB(0, 230, 118),
+        Warning = Color3.fromRGB(255, 193, 7),
+        Error = Color3.fromRGB(255, 82, 82)
     },
+}
+
     Animations = {
         Fast = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
         Medium = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
