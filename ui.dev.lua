@@ -9,8 +9,10 @@ local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
-local Config = {
-    Colors = {
+-- Theme system
+local Themes = {
+    Dark = {
+        Name = "Dark",
         Primary = Color3.fromRGB(45, 45, 55),
         Secondary = Color3.fromRGB(35, 35, 45),
         Accent = Color3.fromRGB(85, 170, 255),
@@ -18,8 +20,41 @@ local Config = {
         TextDark = Color3.fromRGB(200, 200, 200),
         Success = Color3.fromRGB(46, 204, 113),
         Warning = Color3.fromRGB(241, 196, 15),
-        Error = Color3.fromRGB(231, 76, 60)
+        Error = Color3.fromRGB(231, 76, 60),
+        Border = Color3.fromRGB(60, 60, 70),
+        Hover = Color3.fromRGB(65, 65, 75)
     },
+    Light = {
+        Name = "Light",
+        Primary = Color3.fromRGB(240, 240, 245),
+        Secondary = Color3.fromRGB(250, 250, 255),
+        Accent = Color3.fromRGB(0, 120, 215),
+        Text = Color3.fromRGB(20, 20, 20),
+        TextDark = Color3.fromRGB(100, 100, 100),
+        Success = Color3.fromRGB(46, 204, 113),
+        Warning = Color3.fromRGB(230, 180, 0),
+        Error = Color3.fromRGB(232, 17, 35),
+        Border = Color3.fromRGB(200, 200, 200),
+        Hover = Color3.fromRGB(220, 220, 230)
+    },
+    Nord = {
+        Name = "Nord",
+        Primary = Color3.fromRGB(46, 52, 64),
+        Secondary = Color3.fromRGB(59, 66, 82),
+        Accent = Color3.fromRGB(136, 192, 208),
+        Text = Color3.fromRGB(236, 239, 244),
+        TextDark = Color3.fromRGB(216, 222, 233),
+        Success = Color3.fromRGB(163, 190, 140),
+        Warning = Color3.fromRGB(235, 203, 139),
+        Error = Color3.fromRGB(191, 97, 106),
+        Border = Color3.fromRGB(76, 86, 106),
+        Hover = Color3.fromRGB(67, 76, 94)
+    }
+}
+
+local Config = {
+    CurrentTheme = "Dark",
+    Colors = Themes.Dark,
     Animations = {
         Fast = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
         Medium = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
@@ -27,14 +62,45 @@ local Config = {
     }
 }
 
-function uidev:CreateWindow(options)
-    options = options or {}
-    local windowData = {
-        Title = options.Title or "UI Library",
-        Size = options.Size or UDim2.new(0, 580, 0, 420),
-        Theme = options.Theme or "Dark",
-        Draggable = options.Draggable ~= false,
-        Tabs = {},
+-- Theme management functions
+function uidev:SetTheme(themeName)
+    if Themes[themeName] then
+        Config.CurrentTheme = themeName
+        Config.Colors = Themes[themeName]
+        return true
+    end
+    return false
+end
+
+function uidev:AddTheme(name, themeData)
+    if not themeData or not name then return false end
+    themeData.Name = name
+    Themes[name] = themeData
+    return true
+end
+
+function uidev:GetTheme(themeName)
+    return Themes[themeName]
+end
+
+function uidev:GetAvailableThemes()
+    local themeList = {}
+    for name, _ in pairs(Themes) do
+        table.insert(themeList, name)
+    end
+    return themeList
+end
+
+-- ... rest of the code remains the same ...
+    CurrentTheme = "Dark",
+    Colors = Themes.Dark,
+    Animations = {
+        Fast = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        Medium = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        Slow = TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    },
+    Themes = {}
+}
         CurrentTab = nil
     }
 
