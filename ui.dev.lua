@@ -148,53 +148,27 @@ function uidev:CreateWindow(options)
         local dragging = false
         local dragStart = nil
         local startPos = nil
-        local lastDragTime = 0
-        local lastDragPos = nil
-        local inputChangedConnection = nil
-
-        local function updateWindowPosition(newPos)
-            MainFrame.Position = newPos
-            Shadow.Position = UDim2.new(newPos.X.Scale, newPos.X.Offset + 5, newPos.Y.Scale, newPos.Y.Offset + 5)
-        end
 
         TitleBar.InputBegan:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 then
                 dragging = true
                 dragStart = input.Position
                 startPos = MainFrame.Position
-                lastDragPos = input.Position
-                lastDragTime = tick()
             end
         end)
 
-        inputChangedConnection = UserInputService.InputChanged:Connect(function(input)
+        UserInputService.InputChanged:Connect(function(input)
             if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                local currentTime = tick()
-                local deltaTime = currentTime - lastDragTime
-                
-                if deltaTime > 0 then
-                    -- Calculate new position based on mouse movement
-                    local deltaX = input.Position.X - dragStart.X
-                    local deltaY = input.Position.Y - dragStart.Y
-                    
-                    local newPos = UDim2.new(
-                        startPos.X.Scale,
-                        startPos.X.Offset + deltaX,
-                        startPos.Y.Scale,
-                        startPos.Y.Offset + deltaY
-                    )
-                    
-                    updateWindowPosition(newPos)
-                    lastDragPos = input.Position
-                    lastDragTime = currentTime
-                end
+                local delta = input.Position - dragStart
+                local newPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+                MainFrame.Position = newPos
+                Shadow.Position = UDim2.new(newPos.X.Scale, newPos.X.Offset + 5, newPos.Y.Scale, newPos.Y.Offset + 5)
             end
         end)
 
         UserInputService.InputEnded:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 then
                 dragging = false
-                lastDragPos = nil
             end
         end)
     end
